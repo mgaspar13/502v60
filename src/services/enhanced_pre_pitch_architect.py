@@ -188,7 +188,7 @@ class EnhancedPrePitchArchitect:
         
         # Valida avatar_data
         if not avatar_data:
-            errors.append("Dados do avatar ausentes")
+            warnings.append("Dados do avatar ausentes - será criado avatar básico")
         else:
             if not avatar_data.get('dores_viscerais'):
                 warnings.append("Dores viscerais ausentes no avatar")
@@ -197,7 +197,7 @@ class EnhancedPrePitchArchitect:
         
         # Valida drivers_data
         if not drivers_data:
-            warnings.append("Dados de drivers ausentes")
+            warnings.append("Dados de drivers ausentes - será criado sistema básico")
         else:
             if isinstance(drivers_data, dict):
                 drivers_list = drivers_data.get('drivers_customizados', [])

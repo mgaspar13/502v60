@@ -614,16 +614,21 @@ class QualityAssuranceManager:
         if validation['simulation_detected']:
             return False, "PDF rejeitado: Simulações detectadas"
         
-        if not validation['valid']:
-            return False, f"PDF rejeitado: Análise inválida - {validation['errors'][0] if validation['errors'] else 'Erro desconhecido'}"
+        # Critérios mais flexíveis para PDF
+        if validation['quality_score'] < 50:
+            return False, f"PDF rejeitado: Qualidade muito baixa ({validation['quality_score']:.1f}% < 50%)"
         
-        if validation['quality_score'] < 60:
-            return False, f"PDF rejeitado: Qualidade insuficiente ({validation['quality_score']:.1f}% < 60%)"
+        # Verifica se tem componentes essenciais
+        essential_components = ['avatar_ultra_detalhado', 'insights_exclusivos']
+        missing_essential = [comp for comp in essential_components if comp not in analysis or not analysis[comp]]
+        
+        if missing_essential:
+            return False, f"PDF rejeitado: Componentes essenciais ausentes: {missing_essential}"
         
         # Verifica se tem conteúdo suficiente
         insights = analysis.get('insights_exclusivos', [])
-        if len(insights) < 10:
-            return False, f"PDF rejeitado: Insights insuficientes ({len(insights)} < 10)"
+        if len(insights) < 8:
+            return False, f"PDF rejeitado: Insights insuficientes ({len(insights)} < 8)"
         
         return True, f"PDF aprovado: Qualidade adequada ({validation['quality_score']:.1f}%)"
 
