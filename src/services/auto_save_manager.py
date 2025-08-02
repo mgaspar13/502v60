@@ -76,9 +76,14 @@ class AutoSaveManager:
     ) -> str:
         """Salva etapa imediatamente com timestamp único"""
         
-        # Validação crítica para JSON válido
-        if not isinstance(dados, (dict, list, str, int, float, bool, type(None))):
-            dados = str(dados)
+        # Validação e limpeza crítica para JSON válido
+        try:
+            # Tenta serializar para validar JSON
+            json.dumps(dados, default=str)
+        except (TypeError, ValueError) as e:
+            logger.warning(f"⚠️ Dados não serializáveis para JSON: {e}")
+            # Converte para formato serializável
+            dados = self._make_json_serializable(dados)
         
         timestamp = timestamp or time.time()
         timestamp_str = datetime.fromtimestamp(timestamp).strftime("%Y%m%d_%H%M%S_%f")[:-3]
@@ -142,6 +147,19 @@ class AutoSaveManager:
                 logger.critical(f"🚨 FALHA CRÍTICA no salvamento de emergência: {emergency_error}")
             
             return str(emergency_path)
+    
+    def _make_json_serializable(self, obj: Any) -> Any:
+        """Converte objeto para formato serializável JSON"""
+        
+        if isinstance(obj, dict):
+            return {key: self._make_json_serializable(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [self._make_json_serializable(item) for item in obj]
+        elif isinstance(obj, (str, int, float, bool, type(None))):
+            return obj
+        else:
+            # Converte outros tipos para string
+            return str(obj)
     
     def salvar_erro(self, etapa: str, erro: Exception, contexto: Dict[str, Any] = None) -> str:
         """Salva erro com contexto completo"""

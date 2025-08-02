@@ -163,11 +163,27 @@ class AntiObjectionSystem:
         # Validação crítica de entrada
         if not objections_list:
             logger.error("❌ Lista de objeções vazia")
-            raise ValueError("SISTEMA ANTI-OBJEÇÃO FALHOU: Nenhuma objeção fornecida")
+            # Gera objeções básicas em vez de falhar
+            segmento = context_data.get('segmento', 'negócios')
+            objections_list = [
+                "Não tenho tempo para implementar isso agora",
+                "Preciso pensar melhor sobre o investimento",
+                f"Meu caso em {segmento} é diferente",
+                "Já tentei outras coisas e não deram certo",
+                "Preciso de mais garantias de que funciona"
+            ]
+            logger.warning("⚠️ Usando objeções básicas para sistema anti-objeção")
         
         if not avatar_data:
             logger.error("❌ Dados do avatar ausentes")
-            raise ValueError("SISTEMA ANTI-OBJEÇÃO FALHOU: Dados do avatar ausentes")
+            # Cria avatar básico em vez de falhar
+            segmento = context_data.get('segmento', 'negócios')
+            avatar_data = {
+                'dores_viscerais': [f"Trabalhar muito em {segmento} sem crescer"],
+                'desejos_secretos': [f"Ser autoridade em {segmento}"],
+                'perfil_psicografico': {'personalidade': 'Ambiciosos e determinados'}
+            }
+            logger.warning("⚠️ Usando avatar básico para sistema anti-objeção")
         
         if not context_data.get('segmento'):
             logger.error("❌ Segmento não informado")

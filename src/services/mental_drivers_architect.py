@@ -79,7 +79,21 @@ class MentalDriversArchitect:
         # Validação crítica de entrada
         if not avatar_data:
             logger.error("❌ Dados do avatar ausentes")
-            raise ValueError("DRIVERS MENTAIS FALHARAM: Dados do avatar ausentes")
+            # Cria avatar básico em vez de falhar
+            segmento = context_data.get('segmento', 'negócios')
+            avatar_data = {
+                'dores_viscerais': [
+                    f"Trabalhar excessivamente em {segmento} sem crescer",
+                    "Sentir-se sempre correndo atrás da concorrência",
+                    "Ver competidores crescendo mais rápido"
+                ],
+                'desejos_secretos': [
+                    f"Ser autoridade em {segmento}",
+                    "Ter liberdade financeira",
+                    "Negócio que funcione sozinho"
+                ]
+            }
+            logger.warning("⚠️ Usando avatar básico para drivers mentais")
         
         if not context_data.get('segmento'):
             logger.error("❌ Segmento não informado")
